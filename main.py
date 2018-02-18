@@ -16,6 +16,9 @@ import facebook
 # you don’t have to manually add query strings to URLs
 import requests
 
+# regular expressions 
+import re
+
 
 # Create a UserToken to access the Group page 
 #class UserToken:
@@ -30,11 +33,50 @@ userToken = 'EAACTlWJB8fYBAJhmTiW0Dunh4DzgXOviQNbJOAgZBGIM1JDmqhdU1kwB8vZBbW1vcj
 graph = facebook.GraphAPI(access_token=userToken, version = 2.10, timeout = 120)
 #events = graph.request("https://graph.facebook.com/groups/ELESBerlinPotsdam/")
 events = graph.request("147206572004188?fields=events")
-feeds = graph.request("147206572004188?fields=feed")
+#feeds = graph.request("147206572004188?fields=feed")
 
-stam = graph.request('/oauth/access_token?grant_type=fb_exchange_token&client_id={162269807899126}&client_secret={2a8e0dd875bc7d333de8912b8378b7e6}&fb_exchange_token={EAACTlWJB8fYBAPmm44xzzMZA6tQoTD0AuprMiFvmuZB3C6DDf32EskCPREZA9oXbU0JQMgNpahGjcZBftUgtVJHmkWcovD3gpuCYhDR8Clcm2XspOqGbeDXZCkkOOXZAkIbyFsMCtaDmSV0V0oEEVffCisnXLGJT4jhbzj7DLpfZBlNSIkkg9OyZCNZBNeiZBuKc0ZD}')
+events['events']
 
-stam
+# find if event 
+prog = re.compile(r"event")
+
+# generator Function 
+def genFunc():
+    
+    countFeeds = 0
+    
+    while True:
+        if(len(feeds["feed"]["data"]) == countFeeds): 
+            return
+        elif(prog.search(feeds["feed"]["data"][countFeeds]["story"]) != None):
+            yield feeds["feed"]["data"][0]['id']
+        
+        countFeeds += 1
+
+
+event = graph.request(str(feeds["feed"]["data"][0]['id'])+'?fields=attachments')
+
+
+hey = graph.request(event['attachments']['data'][0]['target']['id'])
+
+hey
+
+
+
+
+
+['target']
+prog.search(feeds["feed"]["data"][0]["story"])
+feeds["feed"]["data"][0]
+
+feeds["feed"]["data"][0]['id']
+
+feeds["feed"]["data"][0]["story"]==
+["story"]
+
+#stam = graph.request('/oauth/access_token?grant_type=fb_exchange_token&client_id={162269807899126}&client_secret={2a8e0dd875bc7d333de8912b8378b7e6}&fb_exchange_token={EAACTlWJB8fYBAPmm44xzzMZA6tQoTD0AuprMiFvmuZB3C6DDf32EskCPREZA9oXbU0JQMgNpahGjcZBftUgtVJHmkWcovD3gpuCYhDR8Clcm2XspOqGbeDXZCkkOOXZAkIbyFsMCtaDmSV0V0oEEVffCisnXLGJT4jhbzj7DLpfZBlNSIkkg9OyZCNZBNeiZBuKc0ZD}')
+
+#stam
 events
 feeds
 #eventList = events['data']
