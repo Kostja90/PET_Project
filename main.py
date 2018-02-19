@@ -25,7 +25,7 @@ import re
 #    def __init__(self):
 
 # expiring on April 18th 2018
-userToken = 'EAACTlWJB8fYBAJhmTiW0Dunh4DzgXOviQNbJOAgZBGIM1JDmqhdU1kwB8vZBbW1vcjTIoxZCLXejUk3hb0la6m74QGxFSUngguyaRM4P727YmoLgLbShLX5vXBkoOQNQJCh8ee7lWyOD3FNOGsJ8eQZBXZA1knjQfkKJ18w8mZBwZDZD'
+userToken = 'EAACTlWJB8fYBAMtotg4frQeHvT1wvgMwXqdIyIwqo8PIrp7E2nYAU3R5XY3b6HnUN8ZCw2IJzIeY1xr2615l741cwUcdNcYBZCvyXXmNzANg08upy2uVJr5lmIk2D0PYrTdZCNcZBE5uDd9bo4kzizorEGk7Q28ZD'
 
 
 
@@ -33,7 +33,7 @@ userToken = 'EAACTlWJB8fYBAJhmTiW0Dunh4DzgXOviQNbJOAgZBGIM1JDmqhdU1kwB8vZBbW1vcj
 graph = facebook.GraphAPI(access_token=userToken, version = 2.10, timeout = 120)
 #events = graph.request("https://graph.facebook.com/groups/ELESBerlinPotsdam/")
 events = graph.request("147206572004188?fields=events")
-#feeds = graph.request("147206572004188?fields=feed")
+feeds = graph.request("147206572004188?fields=feed")
 
 events['events']
 
@@ -41,38 +41,43 @@ events['events']
 prog = re.compile(r"event")
 
 # generator Function 
-def genFunc():
+def findIDs_genFunc(feedsAll):
     
     countFeeds = 0
     
     while True:
-        if(len(feeds["feed"]["data"]) == countFeeds): 
+        try:
+            prog.search(feedsAll["feed"]["data"][countFeeds]["story"])
+            yield feedsAll["feed"]["data"][countFeeds]['id'], countFeeds
+        except KeyError:
+            pass
+        except IndexError:
             return
-        elif(prog.search(feeds["feed"]["data"][countFeeds]["story"]) != None):
-            yield feeds["feed"]["data"][0]['id']
         
         countFeeds += 1
 
 
-event = graph.request(str(feeds["feed"]["data"][0]['id'])+'?fields=attachments')
+identities = findIDs_genFunc(feeds)
 
 
-hey = graph.request(event['attachments']['data'][0]['target']['id'])
+for identity in identities:
+    feedEvent = graph.request(identity[0]+'?fields=attachments')
+    event = graph.request(feedEvent['attachments']['data'][0]['target']['id'])
+    print (event)
+print
 
-hey
+event
+    feedEvent = graph.request(identity[0]+'?fields=attachments')
+    event = graph.request(feedEvent['attachments']['data'][0]['target']['id'])
+    print (event)
 
-
-
-
-
-['target']
 prog.search(feeds["feed"]["data"][0]["story"])
+
 feeds["feed"]["data"][0]
 
 feeds["feed"]["data"][0]['id']
 
-feeds["feed"]["data"][0]["story"]==
-["story"]
+feeds["feed"]["data"][0]["story"] == ["story"]
 
 #stam = graph.request('/oauth/access_token?grant_type=fb_exchange_token&client_id={162269807899126}&client_secret={2a8e0dd875bc7d333de8912b8378b7e6}&fb_exchange_token={EAACTlWJB8fYBAPmm44xzzMZA6tQoTD0AuprMiFvmuZB3C6DDf32EskCPREZA9oXbU0JQMgNpahGjcZBftUgtVJHmkWcovD3gpuCYhDR8Clcm2XspOqGbeDXZCkkOOXZAkIbyFsMCtaDmSV0V0oEEVffCisnXLGJT4jhbzj7DLpfZBlNSIkkg9OyZCNZBNeiZBuKc0ZD}')
 
