@@ -7,7 +7,7 @@ Created on Sat Feb 17 19:11:46 2018
 """
 
 # HTTP client for Python
-import urllib3
+#import urllib3
 
 # facebook SDK
 import facebook
@@ -23,14 +23,12 @@ import re
 # expiring on April 18th 2018
 userToken = 'EAACTlWJB8fYBAMtotg4frQeHvT1wvgMwXqdIyIwqo8PIrp7E2nYAU3R5XY3b6HnUN8ZCw2IJzIeY1xr2615l741cwUcdNcYBZCvyXXmNzANg08upy2uVJr5lmIk2D0PYrTdZCNcZBE5uDd9bo4kzizorEGk7Q28ZD'
 
-
-
 # Request to Facebook 
 graph = facebook.GraphAPI(access_token=userToken, version = 2.10, timeout = 120)
-#events = graph.request("https://graph.facebook.com/groups/ELESBerlinPotsdam/")
 events = graph.request("147206572004188?fields=events")
 feeds = graph.request("147206572004188?fields=feed")
 
+# normelize all found events
 def eventHandling(event):
     
     listOfkeys = ["start","end","title","description","location","adress"]
@@ -48,9 +46,10 @@ def eventHandling(event):
     return(result)
 
 
-# generator Function 
+# generator Function finds all Id's from feeds that are events
 def findEventIDs_genFunc(feedsAll):
-    # find if event 
+    
+    # regEx to find events 
     prog = re.compile(r"event")
     
     countFeeds = 0
@@ -70,15 +69,19 @@ def findEventIDs_genFunc(feedsAll):
 # function calling 
 identities = findEventIDs_genFunc(feeds)
 
-h = {}
+
+eventPosts = {}
+
 # go throug all found events 
 for counter,identity in enumerate(identities):
     feedEvent = graph.request(identity[0]+'?fields=attachments')
     event = graph.request(feedEvent['attachments']['data'][0]['target']['id'])
-    h[counter] = eventHandling(event)
+    eventPosts[counter] = eventHandling(event)
+    
+    # delete double postings
     try:
-        if(h[counter - 1] == h[counter]):
-            del h[counter]
+        if(eventPosts[counter - 1] == eventPosts[counter]):
+            del eventPosts[counter]
     except KeyError:
         pass
 
