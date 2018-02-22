@@ -5,8 +5,11 @@ Created on Sat Feb 17 19:11:46 2018
 
 @author: Konstantin Shuxtelinsky
 """
+# facebook SDK
+import facebook
 
-import header
+# regular expressions 
+import re
 
 # expiring on April 18th 2018
 userToken = 'EAACTlWJB8fYBAMtotg4frQeHvT1wvgMwXqdIyIwqo8PIrp7E2nYAU3R5XY3b6HnUN8ZCw2IJzIeY1xr2615l741cwUcdNcYBZCvyXXmNzANg08upy2uVJr5lmIk2D0PYrTdZCNcZBE5uDd9bo4kzizorEGk7Q28ZD'
